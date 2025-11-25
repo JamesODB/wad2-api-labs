@@ -4,11 +4,26 @@ import tasksRouter from './api/tasks';
 
 dotenv.config();
 
+const errHandler = (err, req, res, next) => {
+  // production mode hides stack traces
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(500).send(`Something went wrong!`);
+  }
+  // development mode shows full details
+  res.status(500).send(
+    `Hey!! You caught the error 👍👍. Here's the details: ${err.stack}`
+  );
+};
+
+
 const app = express();
 const port = process.env.PORT;
 
 app.use(express.json());
 app.use('/api/tasks', tasksRouter);
+
+app.use(errHandler);
+
 
 app.listen(port, () => {
   console.info(`Server running at ${port}`);
